@@ -1,0 +1,862 @@
+print "\tWelcome to the NJ Lottery Number Generator" #Instructions
+#Instructions
+print \
+      """
+Here are the lotteries you can choose from:
+1. Pick 3
+2. Pick 4
+3. Jersey Cash 5
+4. Pick 6
+5. Power Ball
+6. Mega Millions
+7. Quit
+"""
+
+user_answer = "yes" #variable to start and continue the generator game until user does not want to anymor.
+
+import random #random module required
+import time #time module required to tell time
+
+now = time.localtime(time.time()) #Time of the start of this program. 
+while user_answer == "yes" or user_answer == "y": #Based off of the above variable and user responses later. 
+    pick3 = [] #List  for pick3 ticket
+    pick4 = [] #Pick4 ticket list
+    jerseycash5 = [] #Jerseycash5 ticket list
+    pick6 = [] #Pick6 ticket list
+
+    powerball = [] #Powerball ticket list
+    powerball_ball = [] #Powerball BALL list
+
+    megamillions = [] #Megamillions ticket list
+    megamillionsball = [] #Megamillions ball list
+
+    spec_number_answers = ["yes", "no", "y", "n"] #Answers list with applicable answers
+    spec_pick3and4_answers = ["straight/boxed", "boxed"] #Options for pick3 and pick4 within pick my own option
+    spec_pick3and4_answers2 = ["pick my own", "program"] #Options for pick3 and pick4 first
+
+    time_now = time.localtime(time.time()) #Time code for current time at this start of the game.
+    print "\nGreetings user! The local time is currently", time.strftime("%m/%d/%y, %H:%M:%S, %Z", time_now) #Tells user of current time they begin the game.
+
+    user_select = raw_input("\nPlease choose a game to play: ") #Asks user for game to play.
+    while not user_select.isdigit(): #User error checking
+        print "\nThis is not a number. Please choose a number according to the list given."
+        user_select = raw_input("Please try again here: ")
+    user_select = int(user_select) #String to integer
+    while user_select > 7 or user_select < 1: #User error checking number range
+        print "\nThese numbers for the games are all out of range..."
+        user_select = raw_input("Please try again...")
+        while not user_select.isdigit():
+            print "This is NOT a number."
+            user_select = raw_input("Please, try again.")
+        user_select = int(user_select)
+    user_select = str(user_select) #Convert integer back to string
+
+    if user_select == "1": #Selects Pick3
+        print "\nYou chose Pick3!"
+        spec_answer = raw_input("\nWould you like to pick your own numbers or have the program pick for you? Say 'pick my own' or 'program'.").lower()
+        while spec_answer not in spec_pick3and4_answers2: #Error checking for user answers
+            print "\nThis does answer the question."
+            spec_answer = raw_input("Please try again.")
+        if spec_answer == "pick my own": #Pick my own option is chosen
+            spec_number = raw_input("\nWould you like to play STRAIGHT/BOXED or just BOXED?: ").lower() #Within is a straight/boxed option
+            while spec_number not in spec_pick3and4_answers: #More error checking
+                print "\nThis does not answer the question. Please try again."
+                spec_number = raw_input ("\nWould you like to play straight/boxed or just boxed? ").lower()
+            if spec_number == "straight/boxed": #execute this step if straight/boxed is selected
+                amount_pick_number = raw_input("\nHow many straight numbers do you wish to see on your ticket? ")
+                while not amount_pick_number.isdigit(): #More user error checking
+                    amount_pick_number = raw_input("\nPlease try using an actual number. ")
+                amount_pick_number = int(amount_pick_number)
+                while amount_pick_number > 3 or amount_pick_number < 2: #User error checking number range
+                    amount_pick_number = raw_input("\nPlease try inputting a number in between 2 and 3. ")
+                    while not amount_pick_number.isdigit():
+                        amount_pick_number = raw_input("\nThat isn't a number! Try again. ")
+                    amount_pick_number = int(amount_pick_number)
+                        
+                counter = 0
+                if amount_pick_number == 3: #Executes if user selects 3 straight numbers to be seen.
+                    pick_number = raw_input("\nOkay what number would you like to add?")
+                    while not pick_number.isdigit(): #More error checking
+                        pick_number = raw_input("Try again. Not a number.")
+                    pick_number = int(pick_number)
+                    while pick_number > 7 or pick_number < 0: #Number range error checking
+                        print "Out of range. Trust us on this."
+                        pick_number = raw_input("Please pick another number.")
+                        while not pick_number.isdigit():
+                            pick_number = raw_input("NOT a number! Please try again.")
+                        pick_number = int(pick_number)
+                    while counter < amount_pick_number: 
+                        if counter >= 1: #Executes the increment by 1 for each number only after the first number has been appended
+                            pick_number = pick_number + 1
+                        pick3.append(pick_number) #Appends to the list
+                        counter = counter + 1
+                elif amount_pick_number == 2: #Executes this part only if the user picked 2 numbers.
+                    pick_number = raw_input("\nOkay what number would you like to add?")
+                    while not pick_number.isdigit(): #More structured user error checking
+                        pick_number = raw_input("Try again. Not a number.")
+                    pick_number = int(pick_number)
+                    while pick_number > 8 or pick_number < 0:
+                        print "Out of range. Trust us on this."
+                        pick_number = raw_input("Please pick another number.")
+                        while not pick_number.isdigit():
+                            pick_number = raw_input("NOT a number! Please try again.")
+                        pick_number = int(pick_number)
+                    while counter < amount_pick_number:
+                        if counter >= 1: #Same goes here as above.
+                            pick_number = pick_number + 1
+                        pick3.append(pick_number) 
+                        counter = counter + 1
+                if len(pick3) < 3: #executes while the length amount is less than 3. Asks first if user would like numbers selected for them or not.
+                    person_answer = raw_input("\nWould you like us to select the rest of the numbers missing for you?").lower()
+                    while person_answer not in spec_number_answers: #User error checking.
+                        print "\nThis is not an answer."
+                        person_answer = raw_input("Please try again. Would you like us to select the rest of the numbers missing?").lower()
+                    while len(pick3) < 3: #keeps on executing as long as the amount is not 3 yet. 
+                        if person_answer == "no" or person_answer == "n": #executes self selection
+                            pick_number = raw_input("\nPlease place another number here for your ticket so it will be filled. Keep going!")
+                            while not pick_number.isdigit(): #User error checking
+                                pick_number = raw_input("Try again. Not a number.")
+                            pick_number = int(pick_number)
+                            while pick_number > 9 or pick_number < 0: #Number range selection
+                                print "Out of range. Trust us on this."
+                                pick_number = raw_input("Please pick another number.")
+                                while not pick_number.isdigit():
+                                    pick_number = raw_input("NOT a number! Please try again.")
+                                pick_number = int(pick_number)
+                            pick3.append(pick_number)
+                            pick3.sort()
+                        elif person_answer == "yes" or person_answer == "y": #Progam automated selection otherwise
+                            pick_3 = random.randint(0,9)
+                            pick3.append(pick_3)
+                            pick3.sort()
+                print "\nHere are your numbers!", pick3 #Prints results
+                print "\nThe ticket creation time here is", time.strftime("%m/%d/%y, %H:%M:%S, %Z") #Outputs ticket time. 
+                user_answer = raw_input("\nWould you like to play again?") #Wanna play again?
+
+            if spec_number == "boxed": #User boxed option
+                amount_pick_number = raw_input("\nHow many numbers would you like boxed in by yourself?")
+                while not amount_pick_number.isdigit(): #user error checking
+                    amount_pick_number = raw_input("Please try using an actual number. ")
+                amount_pick_number = int(amount_pick_number)
+                while amount_pick_number > 3 or amount_pick_number < 1:
+                    amount_pick_number = raw_input("Please try inputting a number in between 1 and 3. ")
+                    while not amount_pick_number.isdigit():
+                        amount_pick_number = raw_input("That isn't a number! Try again. ")
+                    amount_pick_number = int(amount_pick_number)
+                        
+                counter = 0
+                if amount_pick_number == 3: #Executes if user chooses to pick 3 number to get boxed in
+                    while counter < amount_pick_number: #executes as long as the number added is not up to the amount of amount desired.
+                        pick_number = raw_input("\nWhat number would you like to add?: ")
+                        while not pick_number.isdigit(): #User error checking structure
+                            pick_number = raw_input("That is not a number. Please try again.")
+                        pick_number = int(pick_number)
+                        while pick_number > 9 or pick_number < 0:
+                            print "The number you picked is out of range. Trust us on this."
+                            pick_number = raw_input("Please pick another number. ")
+                            while not pick_number.isdigit():
+                                pick_number = raw_input("That is not a number! Please try again. ")
+                            pick_number = int(pick_number)
+                        pick3.append(pick_number)
+                        counter = counter + 1
+                    if counter == 3: #Use error duplicate checking.
+                        random_index = random.randint(0,1) #Random index to be selected.
+                        while pick_number == pick3[random_index]: #Maximum 2 numbers duplicate checking... most likely will not execute or have the need to.
+                            pick3.remove(pick_number) 
+                            pick_number = raw_input("\nSorry you cannot have the same number. If you believe you can pick this number again, please keep trying: ")
+                            while not pick_number.isdigit(): #User error checking
+                                pick_number = raw_input("That is not a number. Please try again.")
+                            pick_number = int(pick_number)
+                            while pick_number > 9 or pick_number < 0:
+                                print "The number you picked is out of range. Trust us on this."
+                                pick_number = raw_input("Please pick another number. ")
+                                while not pick_number.isdigit():
+                                    pick_number = raw_input("That is not a number! Please try again. ")
+                                pick_number = int(pick_number)
+                            pick3.append(pick_number)
+                            random_index = random.randint(0,1) #Resets the index so that if not every number in the ticket matches, the user can input their desired number. 
+                elif amount_pick_number == 2: #Executes if user wants to box in 2 numbers.
+                    while counter < amount_pick_number: #executs till amount desired is reached.
+                        pick_number = raw_input("\nOkay what number would you like to add?")
+                        while not pick_number.isdigit():
+                            pick_number = raw_input("Try again. Not a number.")
+                        pick_number = int(pick_number)
+                        while pick_number > 9 or pick_number < 0:
+                            print "Out of range. Trust us on this."
+                            pick_number = raw_input("Please pick another number.")
+                            while not pick_number.isdigit():
+                                pick_number = raw_input("NOT a number! Please try again.")
+                            pick_number = int(pick_number)
+                        pick3.append(pick_number)
+                        counter = counter + 1
+                elif amount_pick_number == 1: #user only wants 1 number in the ticket list? Fine. 
+                    while counter < amount_pick_number: #Same execution structure as above
+                        pick_number = raw_input("\nOkay what number would you like to add?")
+                        while not pick_number.isdigit():
+                            pick_number = raw_input("Try again. Not a number.")
+                        pick_number = int(pick_number)
+                        while pick_number > 9 or pick_number < 0:
+                            print "Out of range. Trust us on this."
+                            pick_number = raw_input("Please pick another number.")
+                            while not pick_number.isdigit():
+                                pick_number = raw_input("NOT a number! Please try again.")
+                            pick_number = int(pick_number)
+                        pick3.append(pick_number)
+                        counter = counter + 1
+                while len(pick3) < 3: #executes while the amount of the list is less than 3 for pick3. 
+                    pick_3 = random.randint(0,9) 
+                    if len(pick3) == 2: #error checking for more than 2 duplicates if the need ever arises.
+                        random_index = random.randint(0,1)
+                        while pick_3 == pick3[random_index]: #Random index is used for checking for more than 2 duplicates. Need not likely to be done.
+                            pick_3 = random.randint(0,9)
+                    pick3.append(pick_3)
+                print "\nHere are your numbers!", pick3 #Print results
+                print "\nThe time of this ticket creation is", time.strftime("%m/%d/%y, %H:%M:%S, %Z") #Outputs ticket creation time
+                user_answer = raw_input("\nWould you like to play again?") #Wanna play again?
+        elif spec_answer == "program": #If user wants program automated selection, fine.
+            while len(pick3) < 3: #While list is less than 3. It will fill up automatically. 
+                pick_3 = random.randint(0,9) #Tickets have been seen where all numbers were DUPLICATES therefore it is allowed here.
+                pick3.append(pick_3)
+            print "\nHere are your numbers!", pick3
+            print "\nThe time with this ticket is", time.strftime("%m/%d/%y, %H:%M:%S, %Z") #Outputs ticket time
+            user_answer = raw_input("\nWould you like to play again?")
+
+    if user_select == "2": #User picks Pick4... a complicated program.
+        print "\nYou chose Pick4!"
+        spec_answer = raw_input("\nWould you like to pick your own numbers or have the program pick for you? Say 'pick my own' or 'program'.").lower()
+        while spec_answer not in spec_pick3and4_answers2: #User error checking for question
+            print "\nThis does answer the question."
+            spec_answer = raw_input("Please try again.")
+        if spec_answer == "pick my own": #Pick my own option enabled.
+            spec_number = raw_input("\nWould you like to play STRAIGHT/BOXED or just BOXED?: ").lower()
+            while spec_number not in spec_pick3and4_answers: #More user error checking
+                print "\nThis does not answer the question. Please try again."
+                spec_number = raw_input ("\nWould you like to play straight/boxed or just boxed? ").lower()
+            if spec_number == "straight/boxed": #Within pick my own is this option. 
+                amount_pick_number = raw_input("\nHow many straight numbers do you wish to see on your ticket? ")
+                while not amount_pick_number.isdigit(): #More user error checking
+                    amount_pick_number = raw_input("\nPlease try using an actual number. ")
+                amount_pick_number = int(amount_pick_number) #String back to integer
+                while amount_pick_number > 4 or amount_pick_number < 2: #Error checking for out of range numbers. 
+                    amount_pick_number = raw_input("\nPlease try inputting a number in between 2 and 4. ")
+                    while not amount_pick_number.isdigit(): #Error checking within...
+                        amount_pick_number = raw_input("\nThat isn't a number! Try again. ")
+                    amount_pick_number = int(amount_pick_number)
+                        
+                counter = 0
+                if amount_pick_number == 4: #Executes only IF user picks to see 4 numbers added by increment of 1 for them.
+                    pick_number = raw_input("\nWhat number would you like to add?: ")
+                    while not pick_number.isdigit(): #User error checking
+                        pick_number = raw_input("That is not a number. Please try again.")
+                    pick_number = int(pick_number) 
+                    while pick_number > 6 or pick_number < 0: #Error checking out of range. Applies below for others too.
+                        print "The number you picked is out of range. Trust us on this."
+                        pick_number = raw_input("Please pick another number. ")
+                        while not pick_number.isdigit():
+                            pick_number = raw_input("That is not a number! Please try again. ")
+                        pick_number = int(pick_number)
+                    while counter < amount_pick_number: #executes commands until amount the user picked has been reached.
+                        if counter >= 1: #After the first number has been appended, append all numbers by increments of 1.
+                            pick_number = pick_number + 1
+                        pick4.append(pick_number)
+                        counter = counter + 1
+                elif amount_pick_number == 3: #executes when user picks to see 3 straight numbers. 
+                    pick_number = raw_input("\nOkay what number would you like to add?")
+                    while not pick_number.isdigit(): #Error checking
+                        pick_number = raw_input("Try again. Not a number.")
+                    pick_number = int(pick_number)
+                    while pick_number > 7 or pick_number < 0: #Number range checking
+                        print "Out of range. Trust us on this."
+                        pick_number = raw_input("Please pick another number.")
+                        while not pick_number.isdigit():
+                            pick_number = raw_input("NOT a number! Please try again.")
+                        pick_number = int(pick_number)
+                    while counter < amount_pick_number: #Same principle applies here from above.
+                        if counter >= 1: #Same as above where only after the first number does increments of 1 numbers are added.
+                            pick_number = pick_number + 1
+                        pick4.append(pick_number)
+                        counter = counter + 1
+                elif amount_pick_number == 2: #executes after user has chosen 2 numbers straight to see.
+                    pick_number = raw_input("\nOkay what number would you like to add?")
+                    while not pick_number.isdigit(): #more error checking
+                        pick_number = raw_input("Try again. Not a number.")
+                    pick_number = int(pick_number)
+                    while pick_number > 8 or pick_number < 0: #More number range checking
+                        print "Out of range. Trust us on this."
+                        pick_number = raw_input("Please pick another number.")
+                        while not pick_number.isdigit():
+                            pick_number = raw_input("NOT a number! Please try again.")
+                        pick_number = int(pick_number)
+                    while counter < amount_pick_number:
+                        if counter >= 1: #Same concept as above. 
+                            pick_number = pick_number + 1
+                        pick4.append(pick_number)
+                        counter = counter + 1
+                if len(pick4) < 4: #If the user didn't choose to see all numbers in a straight increment...
+                    person_answer = raw_input("\nWould you like us to select the rest of the numbers missing for you?").lower()
+                    while person_answer not in spec_number_answers: #Error checking.
+                        print "\nThis is not an answer."
+                        person_answer = raw_input("Please try again. Would you like us to select the rest of the numbers missing?").lower()
+                    while len(pick4) < 4: #Executes commands below if the amount is less than 4.
+                        if person_answer == "no" or person_answer == "n": #Allows the user to fill in their own numbers if condition is met.
+                            pick_number = raw_input("\nPlease place another number here for your ticket so it will be filled. Keep going!")
+                            while not pick_number.isdigit(): #More user error checking.
+                                pick_number = raw_input("Try again. Not a number.")
+                            pick_number = int(pick_number)
+                            while pick_number > 9 or pick_number < 0: 
+                                print "Out of range. Trust us on this."
+                                pick_number = raw_input("Please pick another number.")
+                                while not pick_number.isdigit():
+                                    pick_number = raw_input("NOT a number! Please try again.")
+                                pick_number = int(pick_number)
+                            pick4.append(pick_number)
+                            pick4.sort()
+                        elif person_answer == "yes" or person_answer == "y": #The machine instead now picks and appends the numbers. 
+                            pick_4 = random.randint(0,9)
+                            pick4.append(pick_4)
+                            pick4.sort()
+                print "\nHere are your numbers!", pick4 #Prints the results
+                print "\nThe time of this ticket creation is", time.strftime("%m/%d/%y, %H:%M:%S, %Z") #Outputs ticket time
+                user_answer = raw_input("\nWould you like to play again?")
+
+            if spec_number == "boxed": #Boxed option within pick my own.
+                amount_pick_number = raw_input("\nHow many numbers would you like boxed in by yourself?")
+                while not amount_pick_number.isdigit(): #User error checking
+                    amount_pick_number = raw_input("Please try using an actual number. ")
+                amount_pick_number = int(amount_pick_number)
+                while amount_pick_number > 4 or amount_pick_number < 1: 
+                    amount_pick_number = raw_input("Please try inputting a number in between 1 and 4. ")
+                    while not amount_pick_number.isdigit(): 
+                        amount_pick_number = raw_input("That isn't a number! Try again. ")
+                    amount_pick_number = int(amount_pick_number)
+                        
+                counter = 0
+                if amount_pick_number == 4: #Executes if user picked 4 numbers to be boxed in instead.
+                    while counter < amount_pick_number:
+                        pick_number = raw_input("\nWhat number would you like to add?: ")
+                        while not pick_number.isdigit(): #More user error checking
+                            pick_number = raw_input("That is not a number. Please try again.")
+                        pick_number = int(pick_number)
+                        while pick_number > 9 or pick_number < 0:
+                            print "The number you picked is out of range. Trust us on this."
+                            pick_number = raw_input("Please pick another number. ")
+                            while not pick_number.isdigit():
+                                pick_number = raw_input("That is not a number! Please try again. ")
+                            pick_number = int(pick_number)
+                        pick4.append(pick_number) #Adds to the list
+                        counter = counter + 1
+                    if counter == 4: #executes if there is already 4 number in the list.
+                        random_index = random.randint(0,2) #Chooses between 0-2 for the list index.
+                        while pick_number == pick4[random_index]: #random list index and if it is equal to the number picked, it will remove that number. Most of the time by far, this will not happen and it will be fine.
+                            pick4.remove(pick_number) #All of this to prevent 4 duplicates according to the rules.
+                            pick_number = raw_input("\nSorry you cannot have the same number. If you believe you can pick this number again, please keep trying: ")
+                            while not pick_number.isdigit(): #User error checking
+                                pick_number = raw_input("That is not a number. Please try again.")
+                            pick_number = int(pick_number)
+                            while pick_number > 9 or pick_number < 0:
+                                print "The number you picked is out of range. Trust us on this."
+                                pick_number = raw_input("Please pick another number. ")
+                                while not pick_number.isdigit():
+                                    pick_number = raw_input("That is not a number! Please try again. ")
+                                pick_number = int(pick_number)
+                            pick4.append(pick_number)
+                            random_index = random.randint(0,2) #Resets the random index if not every number in the ticket so far matches so the user can input their desired number.
+                elif amount_pick_number == 3: #Executes if 3 numbers are chosen to be boxed in.
+                    while counter < amount_pick_number: #Until the amount in the list reaches user desired amount...
+                        pick_number = raw_input("\nOkay what number would you like to add?")
+                        while not pick_number.isdigit(): #More error checking
+                            pick_number = raw_input("Try again. Not a number.")
+                        pick_number = int(pick_number)
+                        while pick_number > 9 or pick_number < 0:
+                            print "Out of range. Trust us on this."
+                            pick_number = raw_input("Please pick another number.")
+                            while not pick_number.isdigit():
+                                pick_number = raw_input("NOT a number! Please try again.")
+                            pick_number = int(pick_number)
+                        pick4.append(pick_number) #Appended to the list
+                        counter = counter + 1
+                elif amount_pick_number == 2: #execues if user chooses to box in 2 numbers. 
+                    while counter < amount_pick_number: #same structure as above
+                        pick_number = raw_input("\nOkay what number would you like to add?")
+                        while not pick_number.isdigit():
+                            pick_number = raw_input("Try again. Not a number.")
+                        pick_number = int(pick_number)
+                        while pick_number > 9 or pick_number < 0:
+                            print "Out of range. Trust us on this."
+                            pick_number = raw_input("Please pick another number.")
+                            while not pick_number.isdigit():
+                                pick_number = raw_input("NOT a number! Please try again.")
+                            pick_number = int(pick_number)
+                        pick4.append(pick_number)
+                        counter = counter + 1
+                elif amount_pick_number == 1: #executes if user only chooses 1 number to be filled in. 
+                    while counter < amount_pick_number:
+                        pick_number = raw_input("\nPlease input your single number...")
+                        while not pick_number.isdigit():
+                            pick_number = raw_input("Try again. Not a number.")
+                        pick_number = int(pick_number)
+                        while pick_number > 9 or pick_number < 0:
+                            print "Out of range. Trust us on this."
+                            pick_number = raw_input("Please pick another number.")
+                            while not pick_number.isdigit():
+                                pick_number = raw_input("NOT a number! Please try again.")
+                            pick_number = int(pick_number)
+                        pick4.append(pick_number)
+                        counter = counter + 1
+                while len(pick4) < 4: #executes only if the list amount is less than 4.
+                    pick_4 = random.randint(0,9)
+                    if len(pick4) == 3: #Error checking for duplicates (only 3 maximum allowed)
+                        random_index = random.randint(0,2)
+                        while pick_4 == pick4[random_index]: #random index is chosen and executed. *Most likely does not ever do this.
+                            pick_4 = random.randint(0,9)
+                    pick4.append(pick_4)
+                print "\nHere are your numbers!", pick4 #Prints results
+                print "\nThe time of this ticket creation is", time.strftime("%m/%d/%y, %H:%M:S, %Z") #Outputs ticket time
+                user_answer = raw_input("\nWould you like to play again?") #Wanna play again?
+        elif spec_answer == "program": #If user just wants the whole program to fill numbers automatically
+            while len(pick4) < 4: 
+                pick_4 = random.randint(0,9)
+                pick4.append(pick_4)
+            if len(pick4) == 4: #Same structure as above with maximum 3 duplicates checking.
+                random_index = random.randint(0,2)
+                while pick_4 == pick4[random_index]: #Same structure
+                    pick4.remove(pick_4)
+                    pick_4 = random.randint(0,9)
+                    pick4.append(pick_4)
+            print "\nHere are your numbers!", pick4
+            print "\nThe time associated with the creation of this ticket is", time.strftime("%m/%d/%y, %H:%M:%S, %Z") #Outputs ticket creation time.
+            user_answer = raw_input("\nWould you like to play again?")
+
+    if user_select == "3": #Selects Jersey Cash 5.
+        print "\nYou chose Jersey Cash 5!"
+        spec_number = raw_input("\nWould you like to add a specific number to your ticket?: ").lower()
+        while spec_number not in spec_number_answers: #User error checking for range of numbers
+            print "\nThis does not answer the question. Please try again."
+            spec_number = raw_input ("\nWould you like to add a specific number between 1-40 to your ticket?: ").lower()
+        if spec_number == "yes" or spec_number == "y": #Allows user to add up to 5 numbers to their ticket.
+            amount_pick_number = raw_input("\nHow many numbers would you like to add? ")
+            while not amount_pick_number.isdigit(): #More user error checking
+                amount_pick_number = raw_input("\nPlease try using an actual number. ")
+            amount_pick_number = int(amount_pick_number) #From string back to integer
+            while amount_pick_number > 5 or amount_pick_number < 1: #User error checking for out of range.
+                amount_pick_number = raw_input("\nPlease try inputting a number in between 1 and 5. ")
+                while not amount_pick_number.isdigit(): #More error checking
+                    amount_pick_number = raw_input("\nThat isn't a number! Try again. ")
+                amount_pick_number = int(amount_pick_number)
+                    
+            counter = 0
+            while counter < amount_pick_number: #Appends the numbers the user picked into a list until the amount the user picked has been reached.
+                pick_number = raw_input("\nWhat number would you like to add?: ")
+                while not pick_number.isdigit(): #More structured user error checking.
+                    pick_number = raw_input("\nThat is not a number. Please try again.")
+                pick_number = int(pick_number)
+                while pick_number > 40 or pick_number < 1:
+                    print "\nThe number you picked is out of range."
+                    pick_number = raw_input("\nPlease pick another number. ")
+                    while not pick_number.isdigit():
+                        pick_number = raw_input("\nThat is not a number! Please try again. ")
+                    pick_number = int(pick_number)
+                while pick_number in jerseycash5: #Error checking for duplicate numbers.
+                    pick_number = raw_input("\nThe number you have inputted is already in your jerserycash5 ticket. Try again. ")
+                    while not pick_number.isdigit():
+                        pick_number = raw_input("\nThat is not a number! Try again please. ")
+                    pick_number = int(pick_number)
+                jerseycash5.append(pick_number)
+                counter = counter + 1
+                jerseycash5.sort()
+            while len(jerseycash5) < 5: #If the list is less than 5 numbers on the ticket, randomly generate numbers and append them.
+                jersey_cash_5 = random.randint(1,40)
+                while jersey_cash_5 in jerseycash5: #Prevents computer from making duplicate numbers.
+                    jersey_cash_5 = random.randint(1,40)
+                jerseycash5.append(jersey_cash_5)
+                jerseycash5.sort()
+            print "\nHere are your numbers!", jerseycash5 #Prints out results. Asks user if they want to play again.
+            user_answer = raw_input("Would you like to play again?")
+        elif spec_number == "no" or spec_number == "n":
+            while len(jerseycash5) < 5: #Standard of having the computer randomly generate numbers for them.
+                jersey_cash_5 = random.randint(1,40)
+                while jersey_cash_5 in jerseycash5: #Computer checking for duplicate numbers.
+                    jersey_cash_5 = random.randint(1,40)
+                jerseycash5.append(jersey_cash_5)
+                jerseycash5.sort()
+            print "\nHere are your numbers!", jerseycash5 #Prints results and numbers.
+            print "\nThe time associated with the creation of this ticket is", time.strftime("%m/%d/%y, %H:%M:%S, %Z") #Outputs time of creation of ticket
+            user_answer = raw_input("\nWould you like to play again?")
+
+    if user_select == "4":
+        # Confirm the selected game with the user
+        print "\nYou chose Pick 6!"
+        spec_number = raw_input("\nWould you like to add a specific number to your ticket?: ").lower()
+        # Error checking with specific list of answers defined in program
+        while spec_number not in spec_number_answers:
+            print "\nThis does not answer the question. Please try again."
+            spec_number = raw_input ("\nWould you like to add a specific number between 1-49 to your ticket?: ").lower()
+        # Executed if the user decides to add specific numbers to the pick 6 ticket
+        if spec_number == "yes" or spec_number == "y":
+            amount_pick_number = raw_input("\nHow many numbers would you like to add? ")
+            while not amount_pick_number.isdigit():
+                amount_pick_number = raw_input("\nPlease try using an actual number. ")
+            amount_pick_number = int(amount_pick_number)
+            # This stops a user from adding more numbers than exist in pick 6 ticket
+            while amount_pick_number > 6 or amount_pick_number < 1:
+                amount_pick_number = raw_input("\nPlease try inputting a number in between 1 and 6. ")
+                while not amount_pick_number.isdigit():
+                    amount_pick_number = raw_input("\nThat isn't a number! Try again. ")
+                amount_pick_number = int(amount_pick_number)
+                    
+            counter = 0
+            while counter < amount_pick_number:
+                pick_number = raw_input("\nWhat number would you like to add?: ")
+                while not pick_number.isdigit():
+                    pick_number = raw_input("\nThat is not a number. Please try again.")
+                pick_number = int(pick_number)
+                # Sets the range as to what numbers can be entered for the pick 6
+                while pick_number > 49 or pick_number < 1:
+                    print "\nThe number you picked is out of range."
+                    pick_number = raw_input("\nPlease pick another number. ")
+                    while not pick_number.isdigit():
+                        pick_number = raw_input("\nThat is not a number! Please try again. ")
+                    pick_number = int(pick_number)
+                # Checks if the number entered by the user already exists in the pick 6 list
+                while pick_number in pick6:
+                    pick_number = raw_input("\nThe number you have inputted is already in your Pick6 ticket. Try again. ")
+                    while not pick_number.isdigit():
+                        pick_number = raw_input("\nThat is not a number! Try again please. ")
+                    pick_number = int(pick_number)
+                # Adds the number to the pick 6 list, sorts the list, and adds 1 to the counter
+                pick6.append(pick_number)
+                counter = counter + 1
+                pick6.sort()
+            # Random numbers are selected and added to the pick 6 list if they are not already contained in the list and if the total list count is less than 6
+            while len(pick6) < 6:
+                pick_6 = random.randint(1,49)
+                while pick_6 in pick6:
+                    pick_6 = random.randint(1,49)
+                pick6.append(pick_6)
+                pick6.sort()
+            # Show the user their pick 6 numbers
+            print "\nHere are your numbers!", pick6
+            user_answer = raw_input("Would you like to play again?")
+        # Executed if the user decides not to enter specific numbers
+        elif spec_number == "no" or spec_number == "n":
+            # Random numbers are selected and added to the pick 6 list if they are not already contained in the list and if the total list count is less than 6
+            while len(pick6) < 6:
+                pick_6 = random.randint(1,49)
+                while pick_6 in pick6:
+                    pick_6 = random.randint(1,49)
+                pick6.append(pick_6)
+                pick6.sort()
+            # Shows the user the genertaed numbers
+            print "\nHere are your numbers!", pick6
+            print "\nThe time of the creation of this ticket is", time.strftime("%m/%d/%y, %H:%M:%S, %Z") #Outputs ticket creation time
+            # Ask the user if they would like to restart the program
+            user_answer = raw_input("\nWould you like to play again?")
+
+    if user_select == "5":
+        # Confirm the selected game with the user
+        print "\nYou chose the Power Ball"
+        spec_number = raw_input("\nWould you like to add a specific number to your ticket?: ").lower()
+        # Error checking with specific list of answers defined in program
+        while spec_number not in spec_number_answers:
+            print "\nThis does not answer the question. Please try again."
+            spec_number = raw_input ("\nWould you like to add a specific number between 1-59 to your ticket?: ").lower()
+        # Executed if the user decides to add specific numbers to the powerball ticket
+        if spec_number == "yes" or spec_number == "y":
+            amount_pick_number = raw_input("\nHow many numbers would you like to add? ")
+            while not amount_pick_number.isdigit():
+                amount_pick_number = raw_input("\nPlease try using an actual number. ")
+            amount_pick_number = int(amount_pick_number)
+            # This stops a user from adding more numbers than exist in powerball
+            while amount_pick_number > 5 or amount_pick_number < 1:
+                amount_pick_number = raw_input("\nPlease try inputting a number in between 1 and 5. ")
+                while not amount_pick_number.isdigit():
+                    amount_pick_number = raw_input("\nThat isn't a number! Try again. ")
+                amount_pick_number = int(amount_pick_number)
+                    
+            counter = 0
+            while counter < amount_pick_number:
+                pick_number = raw_input("\nWhat number would you like to add?: ")
+                while not pick_number.isdigit():
+                    pick_number = raw_input("\nThat is not a number. Please try again.")
+                pick_number = int(pick_number)
+                # Sets the range as to what numbers can be entered for the powerball
+                while pick_number > 59 or pick_number < 1:
+                    print "\nThe number you picked is out of range."
+                    pick_number = raw_input("\nPlease pick another number. ")
+                    while not pick_number.isdigit():
+                        pick_number = raw_input("\nThat is not a number! Please try again. ")
+                    pick_number = int(pick_number)
+                # Checks if the number entered by the user already exists in the powerball list
+                while pick_number in powerball:
+                    pick_number = raw_input("\nThe number you have inputted is already in your Powerball ticket. Try again. ")
+                    while not pick_number.isdigit():
+                        pick_number = raw_input("\nThat is not a number! Try again please. ")
+                    pick_number = int(pick_number)
+                # Adds the number to the powerball list, sorts the list, and adds 1 to the counter
+                powerball.append(pick_number)
+                counter = counter + 1
+                powerball.sort()
+            # Random numbers are selected and added to the powerball list if they are not already contained in the list and if the total list count is less than 5
+            while len(powerball) < 5:
+                pb = random.randint(1,59)
+                while pb in powerball:
+                    pb = random.randint(1,59)
+                powerball.append(pb)
+                powerball.sort()
+            # Ask the user if they would like to pick their powerball number
+            power_ball_answer = raw_input("\nWould you like to choose your Powerball number between 1 and 35? ").lower()
+            # Error checking with specific list of answers defined in program
+            while power_ball_answer not in spec_number_answers:
+                power_ball_answer = raw_input("\nPlease try again and dictate an actual coherent answer. ").lower()
+            if power_ball_answer == "yes" or power_ball_answer == "y":
+                power_ball = raw_input("\nWhat number would you like to choose? ")
+                while not power_ball.isdigit():
+                    power_ball = raw_input("\nNot a number please try again. ")
+                power_ball = int(power_ball)
+                # Checks if the number is already contained in the powerball list
+                while power_ball in powerball:
+                    power_ball = raw_input("\nThe number you have inputted is already in your Powerball ticket. Try again. ")
+                    while not power_ball.isdigit():
+                        power_ball = raw_input("\nThat is not a number! Try again please. ")
+                    power_ball = int(power_ball)
+                # Sets the range as to what numbers can be entered for the megaball
+                while power_ball > 35 or power_ball < 1:
+                    power_ball = raw_input("\nPlease try again. That is not within range. ")
+                    while not power_ball.isdigit():
+                        power_ball = raw_input("\nInput a REAL number please. ")
+                    power_ball = int(power_ball)
+                    while power_ball in powerball:
+                        power_ball = raw_input("\nThe number you have inputted is already in your Powerball ticket. Try again. ")
+                        while not power_ball.isdigit():
+                            power_ball = raw_input("\nPlease try again. That is not a number...")
+                        power_ball = int(power_ball)
+                # Add the powerball to the powerball list
+                powerball_ball.append(power_ball)
+            # Executed if the user decides not to add a powerball number
+            elif power_ball_answer == "n" or power_ball_answer == "no":
+                # Random number is selected and added to the powerball list if it is not already contained in the list
+                power_ball = random.randint(1,35)
+                while power_ball in powerball:
+                    power_ball = random.randint(1,35)
+                # Add the powerball to the powerball list    
+                powerball_ball.append(power_ball)
+            # Shows the user the genertaed numbers
+            print "\nHere are your numbers: ",powerball, "and your Powerball", powerball_ball
+            # Ask the user if they would like to restart the program
+            user_answer = raw_input("\nWould you like to play again? ").lower()
+        # Executed if the user decides not to pick specific numbers to add to the powerball list
+        elif spec_number == "no" or spec_number == "n":
+            while len(powerball) < 5:
+                pb = random.randint(1,59)
+                while pb in powerball:
+                    pb = random.randint(1,59)
+                # Adds the numbers to the powerball list and sorts them
+                powerball.append(pb)
+                powerball.sort()
+            power_ball_answer = raw_input("\nWould you like to choose your Powerball number between 1 and 35? ").lower()
+            while power_ball_answer not in spec_number_answers:
+                power_ball_answer = raw_input("\nPlease try again and dictate an actual coherent answer. ").lower()
+            # Executed if the user decides to chose a megaball number for their ticket
+            if power_ball_answer == "yes" or power_ball_answer == "y":
+                power_ball = raw_input("\nWhat number would you like to choose? ")
+                while not power_ball.isdigit():
+                    power_ball = raw_input("\nNot a number please try again. ")
+                power_ball = int(power_ball)
+                # Checks if the number is already contained in the powerball list
+                while power_ball in powerball:
+                    power_ball = raw_input("\nThe number you have inputted is already in the powerball. Try again. ")
+                    while not power_ball.isdigit():
+                        power_ball = raw_input("\nThat is not a number! Try again please. ")
+                    power_ball = int(power_ball)
+                # Sets the range as to what numbers can be entered for the powerball
+                while power_ball > 35 or power_ball < 1:
+                    power_ball = raw_input("\nPlease try again. Choose a number between 1 and 35. ")
+                    while not power_ball.isdigit():
+                        power_ball = raw_input("\nInput a REAL number please. ")
+                    power_ball = int(power_ball)
+                    while power_ball in powerball:
+                        power_ball = raw_input("\nThe number you have inputted is already in your Powerball ticket. Try again. ")
+                        while not power_ball.isdigit():
+                            power_ball = raw_input("\nPlease try again. That is not a number... ")
+                        power_ball = int(power_ball)
+                # Add the powerball to the powerball list
+                powerball_ball.append(power_ball)
+            # Executed if the user decides to no chose a powerball number
+            elif power_ball_answer == "n" or power_ball_answer == "no":
+                # Random number is selected and added to the powerball list if it is not already contained in the list
+                power_ball = random.randint(1,35)
+                while power_ball in powerball:
+                    power_ball = random.randint(1,35)
+                # Add the megaball to the powerball list
+                powerball_ball.append(power_ball)
+            # Shows the user the genertaed numbers
+            print "\nHere are your numbers: ",powerball, "and your Powerball", powerball_ball
+            print "\nThe time of the creation of this ticket is", time.strftime("%m/%d/%y, %H:%M:%S, %Z") #Outputs ticket creation time
+            # Ask the user if they would like to restart the program
+            user_answer = raw_input("\nWould you like to play again? ").lower()
+
+    if user_select == "6":
+        # Confirm the selected game with the user
+        print "\nYou chose the Mega Millions"
+        spec_number = raw_input("\nWould you like to add a specific number to your ticket?: ").lower()
+        # Error checking with specific list of answers defined in program
+        while spec_number not in spec_number_answers:
+            print "This does not answer the question. Please try again."
+            spec_number = raw_input ("\nWould you like to add a specific number to your ticket?: ").lower()
+        # Executed if the user decides to add specific numbers to the megamillions ticket
+        if spec_number == "yes" or spec_number == "y":
+            amount_pick_number = raw_input("\nHow many numbers would you like to add? ")
+            while not amount_pick_number.isdigit():
+                amount_pick_number = raw_input("\nPlease try using an actual number. ")
+            amount_pick_number = int(amount_pick_number)
+            # This stops a user from adding more numbers than exist in megamillions
+            while amount_pick_number > 5 or amount_pick_number < 1:
+                amount_pick_number = raw_input("\nPlease try inputting a number in between 1 and 5. ")
+                while not amount_pick_number.isdigit():
+                    amount_pick_number = raw_input("\nThat isn't a number! Try again. ")
+                amount_pick_number = int(amount_pick_number)
+                    
+            counter = 0
+            while counter < amount_pick_number:
+                pick_number = raw_input("\nWhat number would you like to add?: ")
+                while not pick_number.isdigit():
+                    pick_number = raw_input("\nThat is not a number. Please try again. ")    
+                pick_number = int(pick_number)
+                # Sets the range as to what numbers can be entered for the megamillions
+                while pick_number > 56 or pick_number < 1:
+                    print "The number you picked is out of range."
+                    pick_number = raw_input("\nPlease pick another number. ")
+                    while not pick_number.isdigit():
+                        pick_number = raw_input("\nThat is not a number! Please try again. ")
+                    pick_number = int(pick_number)
+                # Checks if the number entered by the user already exists in the megamillions list
+                while pick_number in megamillions:
+                    pick_number = raw_input("\nThe number you have inputted is already in the megamillions. Try again. ")
+                    while not pick_number.isdigit():
+                        pick_number = raw_input("\nThat is not a number! Try again please. ")
+                    pick_number = int(pick_number)
+                # Adds the number to the megamillions list, sorts the list, and adds 1 to the counter
+                megamillions.append(pick_number)
+                counter = counter + 1
+                megamillions.sort()
+            # Random numbers are selected and added to the megamillions list if they are not already contained in the list and if the total list count is less than 5
+            while len(megamillions) < 5:
+                mm = random.randint(1,56)
+                while mm in megamillions:
+                    mm = random.randint(1,56)
+                megamillions.append(mm)
+                megamillions.sort()
+            # Ask the user if they would like to pick their megaball
+            mega_ball_answer = raw_input("\nWould you like to choose your megaball number between 1 and 46?: ").lower()
+            # Error checking with specific list of answers defined in program
+            while mega_ball_answer not in spec_number_answers:
+                mega_ball_answer = raw_input("\nPlease try again and dictate an actual coherent answer. ").lower()
+            if mega_ball_answer == "yes" or mega_ball_answer == "y":
+                mega_ball = raw_input("\nWhat number would you like to choose? ")
+                while not mega_ball.isdigit():
+                    mega_ball = raw_input("\nNot a number please try again. ")
+                mega_ball = int(mega_ball)
+                # Checks if the number is already contained in the megamillions list
+                while mega_ball in megamillions:
+                    mega_ball = raw_input("\nThe number you have inputted is already in the megamillions. Try again. ")
+                    while not mega_ball.isdigit():
+                        mega_ball = raw_input("\nThat is not a number! Try again please. ")
+                    mega_ball = int(mega_ball)
+                # Sets the range as to what numbers can be entered for the megaball
+                while mega_ball > 46 or mega_ball < 1:
+                    mega_ball = raw_input("\nPlease try again. That is not within range. ")
+                    while not mega_ball.isdigit():
+                        mega_ball = raw_input("\nInput a REAL number please. ")
+                    mega_ball = int(mega_ball)
+                    while mega_ball in megamillions:
+                        mega_ball = raw_input("\nThe number you have inputted is already in the megamillions. Try again. ")
+                        while not mega_ball.isdigit():
+                            mega_ball = raw_input("\nPlease try again. That is not a number... ")
+                        mega_ball = int(mega_ball)
+                # Add the megaball to the megamillions list
+                megamillionsball.append(mega_ball)
+            # Executed if the user decides not to add a megaball number
+            elif mega_ball_answer == "n" or mega_ball_answer == "no":
+                # Random number is selected and added to the megamillions list if it is not already contained in the list
+                mega_ball = random.randrange(1,46)
+                while mega_ball in megamillions:
+                    mega_ball = random.randint(1,46)
+                # Add the megaball to the megamillions list
+                megamillionsball.append(mega_ball)
+            # Shows the user the genertaed numbers
+            print "\nHere are your numbers: ",megamillions, "and your Gold Mega Ball", megamillionsball
+            # Ask the user if they would like to restart the program
+            user_answer = raw_input("\nWould you like to play again?").lower()
+        # Executed if the user decides not to pick specific numbers to add to the megamillions list    
+        elif spec_number == "no" or spec_number == "n":
+            # Random numbers are selected and added to the megamillions list if they are not already contained in the list and if the total list count is less than 5
+            while len(megamillions) < 5:
+                mm = random.randint(1,56)
+                while mm in megamillions:
+                    mm = random.randint(1,56)
+                # Adds the numbers to the megamillions list and sorts them
+                megamillions.append(mm)
+                megamillions.sort()
+            mega_ball_answer = raw_input("\nWould you like to choose your megaball number between 1 and 46?: ").lower()
+            while mega_ball_answer not in spec_number_answers:
+                mega_ball_answer = raw_input("\nPlease try again and dictate an actual coherent answer. ").lower()
+            # Executed if the user decides to chose a megaball number for their ticket
+            if mega_ball_answer == "yes" or mega_ball_answer == "y":
+                mega_ball = raw_input("\nWhat number would you like to choose? ")
+                while not mega_ball.isdigit():
+                    mega_ball = raw_input("\nNot a number please try again. ")
+                mega_ball = int(mega_ball)
+                # Checks if the number is already contained in the megamillions list
+                while mega_ball in megamillions:
+                    mega_ball = raw_input("\nThe number you have inputted is already in the megamillions. Try again. ")
+                    while not mega_ball.isdigit():
+                        mega_ball = raw_input("\nThat is not a number! Try again please. ")
+                    mega_ball = int(mega_ball)
+                # Sets the range as to what numbers can be entered for the megaball
+                while mega_ball > 46 or mega_ball < 1:
+                    mega_ball = raw_input("\nPlease try again. That is not within range. ")
+                    while not mega_ball.isdigit():
+                        mega_ball = raw_input("\nInput a REAL number please. ")
+                    mega_ball = int(mega_ball)
+                    while mega_ball in megamillions:
+                        mega_ball = raw_input("\nThe number you have inputted is already in the megamillions. Try again. ")
+                        while not mega_ball.isdigit():
+                            mega_ball = raw_input("\nPlease try again. That is not a number... ")
+                        mega_ball = int(mega_ball)
+                # Add the megaball to the megamillions list
+                megamillionsball.append(mega_ball)
+            # Executed if the user decides to no chose a megaball number
+            elif mega_ball_answer == "n" or mega_ball_answer == "no":
+                # Random number is selected and added to the megamillions list if it is not already contained in the list
+                mega_ball = random.randint(1,46)
+                while mega_ball in megamillions:
+                    mega_ball = random.randint(1,46)
+                # Add the megaball to the megamillions list
+                megamillionsball.append(mega_ball)
+            # Shows the user the genertaed numbers
+            print "\nHere are your numbers: ",megamillions, "and your Gold Mega Ball", megamillionsball
+            print "\nThe time associated with the creation of this ticket is", time.strftime("%m/%d/%y, %H:%M:%S, %Z") #Outputs ticket creation time
+            # Ask the user if they would like to restart the program
+            user_answer = raw_input("\nWould you like to play again? ").lower() 
+
+    if user_select == "7":
+        # Confirm with the user if they would like to quit
+        user_thought = raw_input("\nDo you really wish to quit?")
+        # Error checking with specific list of answers defined in program
+        while user_thought not in spec_number_answers:
+            print "\nThis is not a real answer."
+            user_thought = raw_input("Please try again!")
+        if user_thought == "yes" or user_thought == "y":
+            user_answer = "no"
+        elif user_thought == "no" or user_thought == "n":
+            user_answer = "yes"
+            
+    # Error checking with specific list of answers defined in program
+    while user_answer not in spec_number_answers:
+        print "\nThis is not a coherent answer."
+        user_answer = raw_input("\nPlease try again. Would you like to play again? ")
+
+print "\nThe time you started this program was", time.strftime("%m/%d/%y, %H:%M:%S, %Z", now) #Outputs time started to the user
+print "\nThe time you ended this program is", time.strftime("%m/%d/%y, %H:%M:%S, %Z") #Outputs time ended of program to user
+print "\nHave a lovely day!"
+raw_input ("\nPress Enter to exit")
