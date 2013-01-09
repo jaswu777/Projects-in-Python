@@ -1,2 +1,2 @@
-NJ-Lottery-Code-with-Comments.
+Projects in Python
 ==============================
