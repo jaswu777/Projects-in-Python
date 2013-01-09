@@ -1,0 +1,358 @@
+import sys, os, pygame, pygame.mixer #sys module for game screen. pygame module for functions.  pygame.mixer for audio files.
+            #os module function miscellanous operating system interfaces etc.
+import random #needed for random circle shape creation over screen by MyCircle class.
+import euclid, math #Vectors for 2D/3D motion and physics. Without having to type out everything...
+from pygame.locals import * #From all of pygame modules, import (asterisk) for all. 
+        #math module/function IMPORTAN for mathematical functions...
+pygame.init() #initiates the module files. Optional here actually.
+
+sound = pygame.mixer.Sound("f1 sound.wav") #apparently only .wav audio files work here. Different functions used for mp3 files etc.
+
+engine = pygame.mixer.Sound("engine start up.wav") #New variable for different sound.
+#engine variable now engine.play() to initiate that sound. 
+
+clock = pygame.time.Clock() #pygame time, clock function. used to control framerates. FPS. Per second.
+sound.play() #plays back the sound. loop (how many times to play. Default value is 0 but still plays once. So 5 means plays 6 times. -1 means infinite amount of times.), maxtime (default 0. can be used to stop playback in milliseconds), fade_ms time (fades music gradually up to full volume. Music could end before it happens fully)
+
+size = width, height = 900, 700 #dictates size, width, height, left to right numbers excluding size.
+screen = pygame.display.set_mode(size) #Sets the screen size. Displays it once before below executes to keep it going.
+
+screen_width = 900 #variables for below for loop circles lists creation.
+screen_height = 700
+colors_list = [(0,0,0), (255,0,0), (0,255,0), (0,0,255)] #list of colors below too for loop.
+pygame.display.set_caption("Trial Mode: Escape key for Quit, q key for Quit, e key for sound, spacebar for save image, MouseButton draw lines, d key to delete the drawing, '1' to delete a line") #displays caption on window bar of pygame window.
+class MyCircle: #class objects. First variable is the main primary object.
+    def __init__(self, position, size, color = (255,255,0), velocity = euclid.Vector2(0,0), acceleration = euclid.Vector2(0,0), width = 1):
+        self.position = position    
+        self.size = size
+        self.color = color
+        self.velocity = velocity
+        self.acceleration = acceleration
+        self.width = width  #variables here defined by righthand variable going into 1st. Otherwise, calling righthand variable will be in ERROR like any variable called this way. (Set up like any other variable(s))
+    #parameters defined here in CLASS can be called anything in any order above as long as it matches draw function parameters order later AND other variables later on outside of class also match same similar order as the set CLASS in respect to predefined order of draw function.
+    def display(self): #calls in "self" object (without a return "self" above: because same class) variable primary to define below for draw function. 
+        rx, ry = int(self.position.x), int(self.position.y)
+        pygame.draw.circle(screen,self.color,(rx, ry),self.size,self.width)
+        #Note* called in parameters in function above REQUIRE matching case sensitive variables defined in __init__ function. 
+        #^Why? SAME CLASS OBJECT(s)  #called into draw circle function as usual order.
+
+    def move(self):
+        self.position += self.velocity * dtime
+        self.bounce()
+    def bounce(self): #function for balls bouncing off the walls. 
+        if self.position.x <= self.size:
+            self.position.x = 2 * self.size - self.position.x
+            self.velocity = self.velocity.reflect(euclid.Vector2(1,0))
+        elif self.position.x >= screen_width - self.size:
+            self.position.x = 2 *(screen_width - self.size) - self.position.x
+            self.velocity = self.velocity.reflect(euclid.Vector2(1,0))
+        if self.position.y <= self.size:
+            self.position.y = 2 * self.size - self.position.y
+            self.velocity = self.velocity.reflect(euclid.Vector2(0,1))
+        elif self.position.y >= screen_height - self.size:
+            self.position.y = 2 *(screen_height - self.size) - self.position.y
+            self.velocity = self.velocity.reflect(euclid.Vector2(0,1))
+    def change_velocity(self,velocity):
+        self.velocity = velocity
+    def surface_distance(self, other, time): #Equation d(t) = |A(t) - B(t)| - (Ra + Rb)
+        radiiAB = self.size + other.size #total radius together
+        posA = self.position + self.velocity * time + 0.5 *(self.acceleration *(time**2))
+        posB = other.position + other.velocity * time + 0.5 *(other.acceleration *(time**2))
+        posAB = abs(posA - posB) #absolute value.
+        return posAB - radiiAB #returns within function of class: difference position minus total radius size
+    def collide(self, other): #when they collide
+        if self.surface_distance(other, dtime) <= 0:
+            collision_vector = self.position - other.position
+            collision_vector.normalize()
+            self.velocity = self.velocity.reflect(collision_vector)
+            other.velocity = other.velocity.reflect(collision_vector)
+
+number_of_circles = 10
+my_circles2 = []
+
+for n in range(number_of_circles):
+    size_circle = random.randint(10,20) 
+    x = random.randint(size_circle, screen_width - size_circle) #coordinates determined by picking in between radius (size) and screen width (x coordinate) minus radius picked.
+    y = random.randint(size_circle, screen_height - size_circle) #coordinates never exceed window by this set condition and possibly show circle outside screen.
+    color23 = random.choice(colors_list)
+    my_circles2.append(MyCircle(euclid.Vector2(x,y),size_circle,color23))
+
+color_circle_motion_list = [(255,255,255),(0,255,0),(255,0,0),(255,255,0),(0,0,255)]
+
+initial_velocity = 20
+class MyCircleMotion: #for calculating changing velocities of circles.
+    def __init__(self, position, size, color10 = (255,255,42), velocity = euclid.Vector2(0,0), acceleration = euclid.Vector2(0,0), width = 5):
+        self.position = position
+        self.size = size
+        self.color10 = color10
+        self.width = width
+        self.velocity = velocity
+        self.acceleration = acceleration
+    def display(self):
+        rx, ry = int(self.position.x), int(self.position.y) #make sure they're integers!
+        pygame.draw.circle(screen, self.color10, (rx, ry), self.size, self.width)
+    def move(self):
+        self.position += self.velocity * dtime #like self2.position = self2.position + (self2.velocity * dtime)
+        self.bounce() #this is so that balls will bounce if needed as the circles(balls) move around in this function as it's called.
+    def change_velocity(self, velocity):
+        self.velocity = velocity
+
+    def bounce(self): #function for balls bouncing off the walls. 
+        if self.position.x <= self.size:
+            self.position.x = 2 * self.size - self.position.x
+            self.velocity = self.velocity.reflect(euclid.Vector2(1,0))
+        elif self.position.x >= screen_width - self.size:
+            self.position.x = 2 *(screen_width - self.size) - self.position.x
+            self.velocity = self.velocity.reflect(euclid.Vector2(1,0))
+        if self.position.y <= self.size:
+            self.position.y = 2 * self.size - self.position.y
+            self.velocity = self.velocity.reflect(euclid.Vector2(0,1))
+        elif self.position.y >= screen_height - self.size:
+            self.position.y = 2 *(screen_height - self.size) - self.position.y
+            self.velocity = self.velocity.reflect(euclid.Vector2(0,1))
+    def surface_distance(self, other, time): #Equation d(t) = |A(t) - B(t)| - (Ra + Rb)
+        radiiAB = self.size + other.size #total radius together
+        posA = self.position + self.velocity * time + 0.5 *(self.acceleration *(time**2))
+        posB = other.position + other.velocity * time + 0.5 *(other.acceleration *(time**2))
+        posAB = abs(posA - posB) #absolute value.
+        return posAB - radiiAB #returns within function of class: difference position minus total radius size
+    def collide(self, other): #when they collide
+        if self.surface_distance(other, dtime) <= 0:
+            collision_vector = self.position - other.position
+            collision_vector.normalize()
+            self.velocity = self.velocity.reflect(collision_vector)
+            other.velocity = other.velocity.reflect(collision_vector)
+
+def get_random_velocity(): #separate function.
+    new_angle = random.uniform(0, math.pi*2) #uniform from random module. generates random FLOATING POINT NUMBER (decimal(s) with many integers after) between 0 and Pi squared.
+    new_x = math.sin(new_angle) #calculates sin
+    new_y = math.cos(new_angle) #calculates cos for y coordinate.
+    new_vector = euclid.Vector2(new_x, new_y) #calculates new vector.
+    new_vector.normalize()
+    new_vector *= initial_velocity #pixels per second basically. new_vector = new_vector * initial_velocity
+    return new_vector
+
+number_of_circles2 = random.randint(5,14)
+for n in range(number_of_circles2):
+    size_circle2 = random.randint(10,20)
+    x = random.randint(size_circle2, screen_width - size_circle2)
+    y = random.randint(size_circle2, screen_height - size_circle2)
+    color10 = random.choice(color_circle_motion_list)
+    velocity = get_random_velocity() #just clearly means that FUNCTION which automatically returns the new_vector will now equal to that variable is set here in RESPECT to preset self. whatever variable so it can match easily and peform the "move" function vector(s)! 
+    my_circle25 = MyCircleMotion(euclid.Vector2(x,y),size_circle2, color10, velocity)
+    my_circles2.append(my_circle25) #Remember.... ALL DAMN VARIABLE PARAMETERS ABOVE HAVE TO MATCH!!!! OR TYPE ERRORS WILL POP UP EVERYWHERE AT WHIM!!!
+direction_tick = 0.0        
+
+color_circle_motion_list2 = [(255,255,255),(255,0,0),(0,255,0),(0,0,255),(255,255,0)]
+
+gravity = euclid.Vector2(0.0,80.0)
+drag = 0.1 #like air resistance
+initial_velocity2 = 21
+class MyCircleMotion2: #for calculating changing velocities of circles.
+    def __init__(self, position, size, color10 = (255,255,42), velocity = euclid.Vector2(0,0), acceleration = euclid.Vector2(0,0), width = 8):
+        self.position = position
+        self.size = size
+        self.color10 = color10
+        self.width = width
+        self.velocity = velocity
+        self.acceleration = acceleration
+    def display(self):
+        rx, ry = int(self.position.x), int(self.position.y) #make sure they're integers!
+        pygame.draw.circle(screen, self.color10, (rx, ry), self.size, self.width)
+    def move(self): #modified compared to 1st Circle Motion class to bounce up and down.
+        self.position += self.velocity * dtime + 0.5 *(self.acceleration *(dtime**2)) #changing acceleration here over time.
+        self.velocity += self.acceleration * dtime #modify velocity while moving or bouncing with acceleration. 
+        self.velocity -= self.velocity * drag * dtime #in addition to the above, this adds drag and decreases from the changed velocity above. Makes it more real world gravity like.
+        self.bounce() #this is so that balls will bounce if needed as the circles(balls) move around in this function as it's called.
+    def change_velocity(self, velocity):
+        self.velocity = velocity
+
+    def bounce(self):
+        if self.position.x <= self.size:
+            self.position.x = 2 * self.size - self.position.x
+            self.velocity = self.velocity.reflect(euclid.Vector2(1,0))
+        elif self.position.x >= screen_width - self.size:
+            self.position.x = 2 *(screen_width - self.size) - self.position.x
+            self.velocity = self.velocity.reflect(euclid.Vector2(1,0))
+        if self.position.y <= self.size:
+            self.position.y = 2 * self.size - self.position.y
+            self.velocity = self.velocity.reflect(euclid.Vector2(0,1))
+        elif self.position.y >= screen_height - self.size:
+            self.position.y = 2 *(screen_height - self.size) - self.position.y
+            self.velocity = self.velocity.reflect(euclid.Vector2(0,1))
+    def surface_distance(self, other, time): #Equation d(t) = |A(t) - B(t)| - (Ra + Rb)
+        radiiAB = self.size + other.size #total radius together
+        posA = self.position + self.velocity * time + 0.5 *(self.acceleration *(time**2))
+        posB = other.position + other.velocity * time + 0.5 *(other.acceleration *(time**2))
+        posAB = abs(posA - posB) #absolute value.
+        return posAB - radiiAB #returns within function of class: difference position minus total radius size
+    def collide(self, other): #when they collide
+        if self.surface_distance(other, dtime) <= 0:
+            collision_vector = self.position - other.position
+            collision_vector.normalize()
+            self.velocity = self.velocity.reflect(collision_vector)
+            other.velocity = other.velocity.reflect(collision_vector)
+                                                              
+def get_random_velocity(): #separate function.
+    new_angle = random.uniform(0, math.pi*2) #uniform from random module. generates random FLOATING POINT NUMBER (decimal(s) with many integers after) between 0 and Pi squared.
+    new_x = math.sin(new_angle) #calculates sin
+    new_y = math.cos(new_angle) #calculates cos for y coordinate.
+    new_vector = euclid.Vector2(new_x, new_y) #calculates new vector.
+    new_vector.normalize()
+    new_vector *= initial_velocity2 #pixels per second basically. new_vector = new_vector * initial_velocity
+    return new_vector
+
+number_of_circles3 = random.randint(3,6)
+my_circles3 = []
+
+for n in range(number_of_circles3):
+    size_circle3 = random.randint(10,20)
+    x = random.randint(size_circle3, screen_width - size_circle3)
+    y = random.randint(size_circle3, screen_height - size_circle3)
+    color11 = random.choice(color_circle_motion_list2)
+    velocity = get_random_velocity() #just clearly means that FUNCTION which automatically returns the new_vector will now equal to that variable is set here in RESPECT to preset self. whatever variable so it can match easily and peform the "move" function vector(s)! 
+    my_circle27 = MyCircleMotion2(euclid.Vector2(x,y),size_circle3, color11, velocity, gravity)
+    my_circles2.append(my_circle27) #Remember.... ALL DAMN VARIABLE PARAMETERS ABOVE HAVE TO MATCH!!!! OR TYPE ERRORS WILL POP UP EVERYWHERE AT WHIM!!!
+
+#Screen keeps displaying until program ends at the end of line(code) or until the system exits by user below. 
+color_ellipse = (0,255,255) #Variable color for ellipse (aqua)
+rectangle = (300,300,150,90) #Variable for beginning shape for ellispe to form, 2 points positions, next 2 size.
+
+color_line = (200,155,64) #color for line(s)
+pos1 = (400,10) #first position, starting point of line.
+pos2 = (130,10) #2nd position, ending point of line. 
+
+points = [(20,120),(140,140),(110,30)] #3 points for polygon shape drawing. 3 sided. TRIANGLE. List required. Tuple. Can also drawn octagons etc. 
+color = (255,255,0) #yellow variable color!
+
+color2 = (230,150,10) #color for...circle.
+position_shape = (200,400) #position for circle.
+radius = (60) #variable radius for circle.
+
+points_draw_app = [] #List for drawing points for basic drawing app to draw lines at command/will. 
+color_line2 = (12,200,48) 
+
+gtr = pygame.image.load("2014 Nissan GTR.jpg").convert()
+#loads the saved image in format (IMPORTANT TO SAVE IMAGE IN SAME PRIMARY DIRECTORY and converts it to the proper pixel format.
+gtr = pygame.transform.scale(gtr,(200,200)) #Makes the original stationary image different size.
+
+screen.blit(gtr,(25,0)) 
+pygame.display.update() #Will redraw the screen.
+
+x = 25 #Point for animation. Starting point. 
+y = 0 #Point for animation another
+r = 0 #variable for color variable for color in screen.fill statement.
+r1 = 1 #may not be necessary but setting up variables here for below to function properly.
+x1 = 1 #See above.
+y1 = 1 #See above.
+a = 200 #Variables for transform size STARTING POINT.
+b = 200
+a1 = 1 #variables for transform scale size increment. 
+b1 = 1
+f = 900
+c = 10
+cr = 200
+while True: #while the number exists (True)... infinite loop to keep the screen displayed until screen is exited by user. 
+    mx, my = pygame.mouse.get_pos() #Gets mouse position currently real time update in this loop. Updates constantly (as long as in this infinite True Loop, otherwise if outside loop, only gets mouse position ONCE) as you move your mouse pointer. Sets those variables by x and y coordinates respectively. 
+    print mx,my
+    for event in pygame.event.get(): #For every event that occurs by individual or by anything else in the screen "get" "retrieved"
+        if event.type == pygame.QUIT: #if the event is "quit" in CAPITAL required, like hitting the close button.
+            pygame.quit() #CRUCIAL TO PREVENT SCREEN FROM RESPONDING QUICKER. EXITS THE GAME FIRST PROGRAM BEFORE THE SCREEN. 
+            sys.exit() #sys exits the game screen and everything.
+        elif event.type == KEYDOWN and event.key == K_ESCAPE: #If ESCAPE KEY capital for "K" on keyboard is pressed , the program will exit. Without the Escape key pressed condition, if any key is pressed... ANY, it will exit.  
+            pygame.quit()
+            sys.exit()
+        elif event.type == KEYDOWN and event.key == K_q: #Same here. if "q" lowercase ONLY is pressed (otherwise = error program), it will exit. W/O event.type KEYDOWN, it will be invalid. Cannot identify "event.key" then if no function/condition for KEYDOWN for keys is set. 
+            pygame.quit()
+            sys.exit()
+        elif event.type == KEYDOWN and event.key == K_e: #just the mouse button hit down. FOR BOTH MOUSE CLICKS SIDES. capital. 
+            engine.play()    #Events outside the "for" event get ONLY loop (otherwise nothing will happen unless directly under an event.type condition or just simply moving your mouse/hitting any key if NOT under any event condition) will occur regardless of some certain events initiated by user or by other events. In the infinite loop. 
+        elif event.type == KEYDOWN and event.key == K_SPACE: #Spacebar part of keyboard aka key. Not mouse etc. 
+            pygame.image.save(screen, "screenshot.jpg") #Saves image variable (the whole screen) when spacebar is hit as "screenshot.jpg" filename and file type under same directory. 
+        #Can be used in actual whole loop saving images for animation style etc. Image editing, video etc. Used for exporting image info etc. to an external file.
+        elif event.type == MOUSEBUTTONDOWN: #Every click this happens. Event position (x,y) coordinates. Every mouse button click adds those points to a list.
+            points_draw_app.append(event.pos) #This is used instead of pygame.mouse.get_pos() due to separate required variables for that function. As added to a list, the draw.lines() function will not be able to differentiate between the separates x and y coordinates not together as one point. Not a tuple.
+        elif event.type == KEYDOWN and event.key == K_d:
+            while len(points_draw_app) != 0: #removes the whole list, aka removing the whole entire shape from screen. Deleting.
+                points_draw_app.remove(points_draw_app[0]) #index 0 for first item always so on etc.
+        elif event.type == KEYDOWN and event.key == K_1: #Removes the last point from list, aka deleting the LAST line drawn for correct mistakes. If nothing in this list/shape existent and user keeps pressing "1", the program will go to error.
+            points_draw_app.remove(points_draw_app[(len(points_draw_app)-1)]) #otherwise if index[0] to remove, then it will remove the first line and subsequent ones instead reverse order.
+            #if deleting the line(s) this way, press the 1 key again ONCE after nothing on screen to delete the ORIGINAL starting coordinates to prevent starting from there to a new line. To start afresh.
+    gtr3 = pygame.transform.scale(gtr,(a,b)) #another variable with different size parameters. If still "gtr2", cancels out original sized "gtr2" with this new one anyway. 
+    screen.fill((0,r,r)) #Fills background screen with certain set color at time. Clears out screen as image moves. To prevent a trailing image as the image moves. If this didn't exist, default color background is black and image would leave trails as it moves.
+    screen.blit(gtr,(mx - 100, my - 100)) #Orignal image. Static.
+    #Mouse pointer from getting position updated constantly above function CONTROLS the now once stationary image as you move the pointer. Subtract 50, or numbers, to prevent your pointer from "sticking" to the edges of image as you move. This makes it the CENTER of the image instead.
+    screen.blit(gtr3,(x,y)) #Calling in the variables from earlier. 0,0 etc. MAKE SURE THAT ALL VARIABLES MATCH!
+                #Slows it down a bit. Tick time clock FPS function. 
+    dtime_ms = clock.tick(60)#Controls it at 60 frames per second. 60 FPS. function called. Designed to control images, manipulation and animation speed as you add more and more to it. To prevent CPU crashing etc.
+        #gets time back in milliseconds frame rate.
+    dtime = dtime_ms/1000.0
+    direction_tick += dtime
+    if (direction_tick > 1.0): #if greater than 1 second.
+        direction_tick = 0.0
+        random_circle = random.choice(my_circles2)
+        new_velocity = get_random_velocity()
+        random_circle.change_velocity(new_velocity)
+
+    screen.lock() #locks screen to draw. HOWEVER unnecessary for just 1 draw function.
+    pygame.draw.rect(screen,(255,0,0), Rect((200,200),(100,100))) #draws a shape, 3 parameters, on screen variable, RGB values Rectangle top, right, width etc..
+     #unlocks after drawing.         #CRUCIAL for THIS program with other functions, to work the draw function/command be displayed RIGHT BEFORE the screen game UPDATE function below. 
+        #OTHERWISE, if placed BEFORE the clock tick function and screen fill/blit and transform images etc., the shape will draw but immediately disappear as program concentrates on image manipulation with more commands right before screen update at end. (Even with a display update afterwards ABOVE as everything else below that also needs to be updated itself anyway at end before showing those changes constantly while the shapes do not show up constantly at all.)
+    pygame.draw.polygon(screen,color,points) #Different way to pass parameters in function. Makes it easier. Draws polygon/shape.
+    pygame.draw.circle(screen,color2,position_shape,radius) #Draws a circle!
+    pygame.draw.circle(screen,(255,0,0),position_shape,(30)) #Personal. Draws circle INSIDE the circle. 
+    pygame.draw.ellipse(screen,color_ellipse,rectangle) #Draws the shape. Uses rectangle coordinates/size first to draw the "imaginary shape" and then forms the ellipse around. 
+    pygame.draw.line(screen,color_line,pos1,pos2, 7) #5th optional parameter is the width of line. 
+    pygame.draw.circle(screen,(230,120,200),(300,100),(c)) #Animating circle radius size. 
+    pygame.draw.circle(screen,(20,200,40),(f,100),(70)) #animating circle position
+    pygame.draw.circle(screen,(100,50,245),(600,100),(cr))
+    if len(points_draw_app) > 1: #Has to be more than 1 point... otherwise no line can form.
+        pygame.draw.lines(screen,color_line2, False , points_draw_app, 6) #Required False logic prevents the drawing app from drawing/using 2 lines EVERY SINGLE time that alters the shape with original starting point (if it was True logic used/default logic). False allows to draw 1 line every time. Optional parameter is width of line.  
+
+
+    for i, number3 in enumerate(my_circles2): #special indicated tuple changed value within index list etc.
+        number3.move()
+        for number4 in my_circles2[i+1:]: #for initial value in list [begin(index number):end(total amount number)] showing beginning, then +1, in comparison with other circles around etc.
+            number3.collide(number4) #collide point checked here otherwise if placed in move will check twice every frame and can have overall errors...
+        number3.display()
+    screen.unlock()     #draw.lines PLURAL needed here since you're drawing multiple lines. 
+
+    pygame.display.update() #Will redraw the screen each time to show. Crucial.
+    if a == 400 and b == 400: #Selection to control scale transform size of 2nd image
+        a1 = -1
+        b1 = -1 #Increments
+    elif a == 150 and b == 150:
+        a1 = 1
+        b1 = 1
+    a = a + a1
+    b = b + b1
+    if x == 700 and y == 675: #Selection statement to control animation movement at will.
+        x1 = -1
+        y1 = -1     #Crucial for both statements to check these conditions first otherwise risk crashing system for below for color coding. 
+    elif x == 0 and y == -25:
+        x1 = 1
+        y1 = 1
+    x = x + x1 #increment by variable. Movement for animation in loop.
+    y = y + y1 #increment by variable. Movement for animation in loop.
+    if c == 150:
+        cx = -1
+    elif c == 10:
+        cx = 1
+    c = c + cx
+    if f == 900:
+        fx = -1
+    elif f == 100:
+        fx = 1
+    f = f + fx
+    if cr == 200: #Modifies the radius in decreasing manner. Then immediately jumps back to original position and doing it all again.
+        cxr = -1
+    elif cr == 15:
+        cr = 200
+    cr = cr + cxr #cxr now becomes universal known variable number like any other similar position variable unless changed in a conditional loop like others.
+    if r == 255: #crucial selection statement to prevent color coding from going above maximum or below minimum color. 
+        r1 = -1
+    elif r == 0:
+        r1 = 1 
+    r = r + r1 #increment by variable "r1" for the color code... program will crash above 255 maximum. 
+
+
