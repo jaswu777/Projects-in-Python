@@ -1,5 +1,3 @@
-Projects in Python:
-
 Instructions for Pygame trial:
 
 ESCAPE key to quit/exit.
@@ -15,4 +13,6 @@ Mouseclick to draw lines/shapes.
 d key to delete the whole drawing/shape.
 
 Press 1 to delete the previous line drawn.
+
+Projects in Python:
 ==============================
