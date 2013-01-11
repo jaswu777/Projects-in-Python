@@ -58,10 +58,10 @@ class MyCircle: #class objects. First variable is the main primary object.
         radiiAB = self.size + other.size #total radius together
         posA = self.position + self.velocity * time + 0.5 *(self.acceleration *(time**2))
         posB = other.position + other.velocity * time + 0.5 *(other.acceleration *(time**2))
-        posAB = abs(posA - posB) #absolute value.
+        posAB = abs(posA - posB) #absolute value. #Down...Specifically returns only the specific result of that equation as the result of this function w/o adding in more (whole) data such as the preceding equations to the function below...
         return posAB - radiiAB #returns within function of class: difference position minus total radius size
     def collide(self, other): #when they collide
-        if self.surface_distance(other, dtime) <= 0:
+        if self.surface_distance(other, dtime) <= 0: #here, dtime is like time later on equal to.
             collision_vector = self.position - other.position
             collision_vector.normalize()
             self.velocity = self.velocity.reflect(collision_vector)
